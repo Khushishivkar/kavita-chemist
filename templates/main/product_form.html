@@ -1,0 +1,40 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_subtitle %}<a href="{% url 'product_list' %}">&larr; Back to medicines</a>{% endblock %}
+
+{% block dash_content %}
+<div class="form-page-card">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for e in form.non_field_errors %}<div class="alert alert-error"><span>{{ e }}</span></div>{% endfor %}
+    <div class="form-section">
+      <h3 class="form-section-title"><i class="fa-solid fa-circle-info"></i> Basic information</h3>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="form-row-2">
+          {% include 'main/_field.html' with field=form.name %}
+          {% include 'main/_field.html' with field=form.brand %}
+        </div>
+        {% include 'main/_field.html' with field=form.category %}
+        {% include 'main/_field.html' with field=form.description %}
+      </div>
+    </div>
+    <div class="form-section">
+      <h3 class="form-section-title"><i class="fa-solid fa-indian-rupee-sign"></i> Pricing and stock</h3>
+      <div class="form-row-3">
+        {% include 'main/_field.html' with field=form.price %}
+        {% include 'main/_field.html' with field=form.quantity %}
+        {% include 'main/_field.html' with field=form.reorder_level %}
+      </div>
+    </div>
+    <div class="form-section">
+      <h3 class="form-section-title"><i class="fa-solid fa-calendar-days"></i> Expiry</h3>
+      <div style="max-width:320px">{% include 'main/_field.html' with field=form.expiry_date %}</div>
+    </div>
+    <div class="form-actions">
+      <a href="{% url 'product_list' %}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save medicine</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Hello {{ user.username }}, here is your pharmacy at a glance.{% endblock %}
+{% block topbar_actions %}<a href="{% url 'product_create' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add medicine</a>{% endblock %}
+
+{% block dash_content %}
+<div class="stats-grid">
+  <div class="stat-card blue"><div class="stat-icon"><i class="fa-solid fa-pills"></i></div><div><div class="stat-number" data-count="{{ total_products }}">{{ total_products }}</div><div class="stat-label">Medicines</div></div></div>
+  <div class="stat-card purple"><div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div><div><div class="stat-number" data-count="{{ total_categories }}">{{ total_categories }}</div><div class="stat-label">Categories</div></div></div>
+  <div class="stat-card orange"><div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="stat-number" data-count="{{ low_count }}">{{ low_count }}</div><div class="stat-label">Low stock</div></div></div>
+  <div class="stat-card red"><div class="stat-icon"><i class="fa-solid fa-ban"></i></div><div><div class="stat-number" data-count="{{ out_count }}">{{ out_count }}</div><div class="stat-label">Out of stock</div></div></div>
+  <div class="stat-card teal">{% if expired_count %}<span class="stat-badge">{{ expired_count }} expired</span>{% endif %}<div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="stat-number" data-count="{{ expiring_count }}">{{ expiring_count }}</div><div class="stat-label">Expiring / expired</div></div></div>
+  <div class="stat-card green"><div class="stat-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div><div><div class="stat-number">&#8377;{{ total_value|floatformat:0 }}</div><div class="stat-label">Stock value</div></div></div>
+</div>
+
+<div class="charts-row">
+  <div class="chart-card"><div class="chart-card-header"><h3>Top stocked medicines</h3></div><div class="chart-wrapper"><canvas id="topChart"></canvas></div></div>
+  <div class="chart-card"><div class="chart-card-header"><h3>Stock health</h3></div><div class="chart-wrapper"><canvas id="statusChart"></canvas></div></div>
+</div>
+
+<div class="alerts-row">
+  <div class="alert-card orange">
+    <div class="alert-card-header"><h3><i class="fa-solid fa-triangle-exclamation"></i> Running low</h3><a class="alert-link" href="{% url 'product_list' %}?status=low">View all</a></div>
+    <div class="alert-list">
+      {% for p in low_items %}
+        <div class="alert-item"><a class="alert-item-name" href="{{ p.get_absolute_url }}">{{ p.name }}</a><span class="alert-item-qty orange">{{ p.quantity }} left</span></div>
+      {% empty %}<p class="empty-text">All medicines are above their reorder level.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="alert-card red">
+    <div class="alert-card-header"><h3><i class="fa-solid fa-calendar-xmark"></i> Expiring soon</h3><a class="alert-link" href="{% url 'product_list' %}?status=expiring">View all</a></div>
+    <div class="alert-list">
+      {% for p in expiring_items %}
+        <div class="alert-item"><a class="alert-item-name" href="{{ p.get_absolute_url }}">{{ p.name }}</a><span class="alert-item-qty red">{{ p.expiry_date|date:"d M Y" }}</span></div>
+      {% empty %}<p class="empty-text">Nothing is close to expiry.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="data-row">
+  <div class="data-card wide">
+    <div class="data-card-header"><h3>Recently added</h3><a class="data-link" href="{% url 'product_list' %}">See all</a></div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead><tr><th>Medicine</th><th>Category</th><th>Qty</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for p in recent_products %}
+          <tr>
+            <td class="td-product"><strong><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></strong><small>{{ p.brand }}</small></td>
+            <td>{{ p.category|default:"-" }}</td>
+            <td>{{ p.quantity }}</td>
+            <td><span class="badge badge-{{ p.status_colour }}">{{ p.status_label }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="empty-td">No medicines yet. <a href="{% url 'product_create' %}">Add your first one</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="data-card">
+    <div class="data-card-header"><h3>Recent stock activity</h3></div>
+    <div class="transaction-list">
+      {% for t in recent_txns %}
+        <div class="txn-item">
+          <div class="txn-icon {{ t.colour }}"><i class="fa-solid {{ t.icon }}"></i></div>
+          <div class="txn-info"><strong>{{ t.product.name }}</strong><small>{{ t.created_at|timesince }} ago</small></div>
+          <div class="txn-qty {{ t.colour }}">{{ t.sign }}{{ t.quantity }}</div>
+        </div>
+      {% empty %}<p class="empty-text">No stock activity yet.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% if unread_messages %}
+<p style="margin-top:20px"><a class="btn btn-secondary" href="{% url 'inbox' %}"><i class="fa-solid fa-inbox"></i> {{ unread_messages }} unread message{{ unread_messages|pluralize }}</a></p>
+{% endif %}
+{{ charts|json_script:"chart-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  if (!window.Chart) return;
+  var d = JSON.parse(document.getElementById('chart-data').textContent);
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  var top = document.getElementById('topChart');
+  if (top) new Chart(top, {
+    type: 'bar',
+    data: { labels: d.topLabels, datasets: [{ label: 'Units in stock', data: d.topValues, backgroundColor: '#1a6b4a', borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' } }, x: { grid: { display: false } } } }
+  });
+  var st = document.getElementById('statusChart');
+  if (st) new Chart(st, {
+    type: 'doughnut',
+    data: { labels: d.statusLabels, datasets: [{ data: d.statusValues, backgroundColor: ['#22c55e', '#f97316', '#ef4444'], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-bg"><div class="hero-circle hero-circle-1"></div><div class="hero-circle hero-circle-2"></div><div class="hero-circle hero-circle-3"></div></div>
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="badge-dot"></span> Smart pharmacy inventory</div>
+      <h1 class="hero-title">Never run out of <span class="hero-title-accent">the medicines that matter</span></h1>
+      <p class="hero-subtitle">Track stock, catch expiring batches early and keep every shelf ready, all from one simple dashboard that works on your phone too.</p>
+      <div class="hero-actions">
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn btn-hero-primary"><i class="fa-solid fa-gauge-high"></i> Open dashboard</a>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn btn-hero-primary"><i class="fa-solid fa-rocket"></i> Get started free</a>
+          <a href="{% url 'login' %}" class="btn btn-hero-outline"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+        {% endif %}
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>24/7</strong><span>Stock alerts</span></div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat"><strong>60d</strong><span>Expiry warning</span></div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat"><strong>1-tap</strong><span>Stock updates</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-mockup">
+        <div class="mockup-header"><div class="mockup-dots"><span></span><span></span><span></span></div><div class="mockup-title">Inventory overview</div></div>
+        <div class="mockup-stats">
+          <div class="mockup-stat-card green"><i class="fa-solid fa-pills"></i><div><strong>Healthy</strong><small>Well stocked</small></div></div>
+          <div class="mockup-stat-card orange"><i class="fa-solid fa-triangle-exclamation"></i><div><strong>Low</strong><small>Reorder soon</small></div></div>
+          <div class="mockup-stat-card blue"><i class="fa-solid fa-layer-group"></i><div><strong>Categories</strong><small>Organised</small></div></div>
+          <div class="mockup-stat-card red"><i class="fa-solid fa-hourglass-end"></i><div><strong>Expiring</strong><small>Act early</small></div></div>
+        </div>
+        <div class="mockup-progress">
+          <div class="progress-item"><span>Pain relief</span><div class="progress-bar"><div style="width:85%"></div></div><span>85%</span></div>
+          <div class="progress-item"><span>Antibiotics</span><div class="progress-bar"><div style="width:60%"></div></div><span>60%</span></div>
+          <div class="progress-item"><span>Vitamins</span><div class="progress-bar"><div style="width:72%"></div></div><span>72%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features-overview">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Features</span>
+      <h2>Everything a chemist shop needs</h2>
+      <p>Simple tools that save time at the counter and money on the shelf.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon green"><i class="fa-solid fa-boxes-stacked"></i></div><h3>Live stock tracking</h3><p>See exactly how many units of every medicine you have, updated the moment stock moves.</p></div>
+      <div class="feature-card"><div class="feature-icon orange"><i class="fa-solid fa-bell"></i></div><h3>Low stock alerts</h3><p>Set a reorder level for each item and get warned before the shelf goes empty.</p></div>
+      <div class="feature-card"><div class="feature-icon red"><i class="fa-solid fa-calendar-xmark"></i></div><h3>Expiry watch</h3><p>Batches nearing expiry are flagged 60 days ahead so nothing is wasted.</p></div>
+      <div class="feature-card"><div class="feature-icon blue"><i class="fa-solid fa-layer-group"></i></div><h3>Categories</h3><p>Group medicines into pain relief, antibiotics, vitamins and more for fast lookup.</p></div>
+      <div class="feature-card"><div class="feature-icon purple"><i class="fa-solid fa-clock-rotate-left"></i></div><h3>Stock history</h3><p>Every stock-in and stock-out is logged with who did it and why.</p></div>
+      <div class="feature-card"><div class="feature-icon teal"><i class="fa-solid fa-mobile-screen"></i></div><h3>Works on any device</h3><p>Responsive design that feels natural on a phone, tablet or the shop computer.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">How it works</span>
+      <h2>Up and running in minutes</h2>
+    </div>
+    <div class="steps-container">
+      <div class="step"><div class="step-number">01</div><div class="step-content"><h3>Create an account</h3><p>Register in seconds, no setup needed.</p></div></div>
+      <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="step"><div class="step-number">02</div><div class="step-content"><h3>Add your medicines</h3><p>Enter name, price, quantity and expiry date.</p></div></div>
+      <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="step"><div class="step-number">03</div><div class="step-content"><h3>Stay in control</h3><p>Let the dashboard tell you what needs attention.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <div class="cta-content">
+        <h2>Ready to simplify your inventory?</h2>
+        <p>Join and start tracking your stock the smart way.</p>
+        <div class="cta-actions">
+          {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-white btn-lg">Go to dashboard</a>
+          {% else %}
+            <a href="{% url 'register' %}" class="btn btn-white btn-lg">Create free account</a>
+            <a href="{% url 'contact' %}" class="btn btn-outline-white btn-lg">Talk to us</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

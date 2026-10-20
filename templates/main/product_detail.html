@@ -1,0 +1,46 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block page_title %}Medicine details{% endblock %}
+{% block page_subtitle %}<a href="{% url 'product_list' %}">&larr; Back to medicines</a>{% endblock %}
+
+{% block dash_content %}
+<div class="detail-grid">
+  <div class="detail-info-card">
+    <div class="detail-header">
+      <div class="detail-product-icon"><i class="fa-solid fa-pills"></i></div>
+      <div>
+        <h2>{{ product.name }}</h2>
+        <p class="detail-brand">{{ product.brand|default:"No brand" }}</p>
+        <span class="badge badge-{{ product.status_colour }}">{{ product.status_label }}</span>
+      </div>
+    </div>
+    <div class="detail-sections">
+      <div class="detail-row"><span class="detail-label">Category</span><span>{{ product.category|default:"Uncategorised" }}</span></div>
+      <div class="detail-row"><span class="detail-label">Price</span><span>&#8377;{{ product.price }}</span></div>
+      <div class="detail-row"><span class="detail-label">In stock</span><span class="{% if product.is_out_of_stock %}text-red{% else %}text-green{% endif %}">{{ product.quantity }} units</span></div>
+      <div class="detail-row"><span class="detail-label">Reorder level</span><span>{{ product.reorder_level }}</span></div>
+      <div class="detail-row"><span class="detail-label">Stock value</span><span>&#8377;{{ product.stock_value }}</span></div>
+      <div class="detail-row"><span class="detail-label">Expiry date</span><span class="{% if product.is_expired %}text-red{% endif %}">{% if product.expiry_date %}{{ product.expiry_date|date:"d M Y" }}{% else %}Not set{% endif %}</span></div>
+      <div class="detail-row"><span class="detail-label">Added</span><span>{{ product.created_at|date:"d M Y" }}</span></div>
+    </div>
+    {% if product.description %}<div class="detail-description"><h4>Description</h4><p>{{ product.description }}</p></div>{% endif %}
+    <div class="detail-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="{% url 'product_stock' product.pk %}"><i class="fa-solid fa-boxes-stacked"></i> Update stock</a>
+      <a class="btn btn-secondary" href="{% url 'product_edit' product.pk %}"><i class="fa-solid fa-pen"></i> Edit</a>
+      <a class="btn btn-danger" href="{% url 'product_delete' product.pk %}"><i class="fa-solid fa-trash"></i> Delete</a>
+    </div>
+  </div>
+  <div class="detail-txn-card">
+    <h3>Stock history</h3>
+    <div class="transaction-list">
+      {% for t in txns %}
+      <div class="txn-item">
+        <div class="txn-icon {{ t.colour }}"><i class="fa-solid {{ t.icon }}"></i></div>
+        <div class="txn-info"><strong>{{ t.get_kind_display }}</strong><small>{{ t.created_at|date:"d M Y, H:i" }}{% if t.created_by %} &middot; {{ t.created_by.username }}{% endif %}</small>{% if t.notes %}<small class="txn-notes">{{ t.notes }}</small>{% endif %}</div>
+        <div class="txn-qty {{ t.colour }}">{{ t.sign }}{{ t.quantity }}</div>
+      </div>
+      {% empty %}<p class="empty-text">No stock movements recorded yet.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Categories{% endblock %}
+{% block page_title %}Categories{% endblock %}
+{% block page_subtitle %}Organise your medicines into groups{% endblock %}
+{% block topbar_actions %}<a href="{% url 'category_create' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add category</a>{% endblock %}
+
+{% block dash_content %}
+<div class="cards-grid">
+  {% for c in categories %}
+  <div class="category-card">
+    <div class="category-card-icon"><i class="fa-solid fa-layer-group"></i></div>
+    <div class="category-card-info">
+      <h3>{{ c.name }}</h3>
+      <p>{{ c.description|default:"No description" }}</p>
+      <a class="category-count" href="{% url 'product_list' %}?category={{ c.pk }}">{{ c.count }} medicine{{ c.count|pluralize }}</a>
+    </div>
+    <div class="category-card-actions">
+      <a class="action-btn edit" href="{% url 'category_edit' c.pk %}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+      <a class="action-btn delete" href="{% url 'category_delete' c.pk %}" title="Delete"><i class="fa-solid fa-trash"></i></a>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-state"><i class="fa-solid fa-layer-group fa-3x"></i><h3>No categories yet</h3><p>Create your first category to organise medicines.</p><a href="{% url 'category_create' %}" class="btn btn-primary">Add category</a></div>
+  {% endfor %}
+</div>
+{% endblock %}

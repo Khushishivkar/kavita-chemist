@@ -1,0 +1,18 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_subtitle %}<a href="{% url 'category_list' %}">&larr; Back to categories</a>{% endblock %}
+
+{% block dash_content %}
+<div class="form-page-card" style="max-width:640px">
+  <form method="post" novalidate style="display:flex;flex-direction:column;gap:16px">
+    {% csrf_token %}
+    {% include 'main/_field.html' with field=form.name %}
+    {% include 'main/_field.html' with field=form.description %}
+    <div class="form-actions">
+      <a href="{% url 'category_list' %}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

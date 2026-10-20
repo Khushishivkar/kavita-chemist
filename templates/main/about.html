@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}About{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><div class="page-hero-content">
+  <h1>About {{ SHOP.name }}</h1>
+  <p>Caring for the community, one prescription at a time.</p>
+</div></div></section>
+
+<section class="about-story"><div class="container"><div class="about-grid">
+  <div class="about-text">
+    <span class="section-tag">Our story</span>
+    <h2>A pharmacy built on trust</h2>
+    <p>{{ SHOP.name }} serves families who need genuine medicines and honest advice. This inventory system helps us keep every essential medicine available and every expired strip off the shelf.</p>
+    <div class="about-values">
+      <div class="value-item"><i class="fa-solid fa-shield-heart"></i> Genuine, quality-checked medicines</div>
+      <div class="value-item"><i class="fa-solid fa-user-doctor"></i> Friendly, knowledgeable service</div>
+      <div class="value-item"><i class="fa-solid fa-clock"></i> Always ready when you need us</div>
+    </div>
+  </div>
+  <div class="about-card">
+    <div class="about-stat-big"><strong>Genuine</strong><span>Medicines only</span></div>
+    <div class="about-stat-big"><strong>Fresh</strong><span>Expiry-checked stock</span></div>
+    <div class="about-stat-big"><strong>Local</strong><span>Serving our neighbourhood</span></div>
+  </div>
+</div></div></section>
+
+<section class="mission-section"><div class="container"><div class="mission-box">
+  <div class="mission-icon"><i class="fa-solid fa-bullseye"></i></div>
+  <h2>Our mission</h2>
+  <p>To make sure the right medicine is on the shelf at the right time, safely and affordably.</p>
+</div></div></section>
+{% endblock %}

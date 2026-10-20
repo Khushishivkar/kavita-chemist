@@ -1,0 +1,32 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Messages{% endblock %}
+{% block page_title %}Customer messages{% endblock %}
+{% block page_subtitle %}Sent from the contact form{% endblock %}
+
+{% block dash_content %}
+<div class="data-card">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead><tr><th>From</th><th>Subject</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for m in items %}
+        <tr class="{% if not m.is_read %}unread-row{% endif %}">
+          <td class="td-product"><strong>{{ m.name }}</strong><small><a href="mailto:{{ m.email }}">{{ m.email }}</a></small></td>
+          <td>{{ m.subject|default:"-" }}</td>
+          <td style="max-width:320px">{{ m.message|truncatechars:140 }}</td>
+          <td>{{ m.created_at|date:"d M Y" }}</td>
+          <td><span class="badge {% if m.is_read %}badge-grey{% else %}badge-orange{% endif %}">{% if m.is_read %}Read{% else %}New{% endif %}</span></td>
+          <td>
+            <form method="post" action="{% url 'inbox_toggle' m.pk %}">{% csrf_token %}
+              <button class="btn btn-ghost btn-sm" type="submit">{% if m.is_read %}Mark unread{% else %}Mark read{% endif %}</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="empty-td">No messages yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

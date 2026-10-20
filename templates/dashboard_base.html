@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block footer %}{% endblock %}
+{% block content %}
+{% with url_name=request.resolver_match.url_name %}
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><i class="fa-solid fa-staff-snake"></i></div>
+      <div>
+        <div class="sidebar-brand">{{ SHOP.name }}</div>
+        <div class="sidebar-user">{{ user.username }}{% if user.is_staff %}<span class="admin-badge">Admin</span>{% endif %}</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{% url 'dashboard' %}" class="sidebar-link {% if url_name == 'dashboard' %}active{% endif %}"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <a href="{% url 'product_list' %}" class="sidebar-link {% if url_name == 'product_list' or url_name == 'product_detail' or url_name == 'product_edit' or url_name == 'product_delete' or url_name == 'product_stock' %}active{% endif %}"><i class="fa-solid fa-pills"></i> Medicines</a>
+      <a href="{% url 'product_create' %}" class="sidebar-link {% if url_name == 'product_create' %}active{% endif %}"><i class="fa-solid fa-circle-plus"></i> Add medicine</a>
+      <a href="{% url 'category_list' %}" class="sidebar-link {% if 'category' in url_name %}active{% endif %}"><i class="fa-solid fa-layer-group"></i> Categories</a>
+      {% if user.is_staff %}
+        <a href="{% url 'inbox' %}" class="sidebar-link {% if 'inbox' in url_name %}active{% endif %}"><i class="fa-solid fa-inbox"></i> Messages</a>
+      {% endif %}
+      <div class="sidebar-divider"></div>
+      <a href="{% url 'home' %}" class="sidebar-link"><i class="fa-solid fa-globe"></i> View website</a>
+      {% if user.is_staff %}
+        <a href="/admin/" class="sidebar-link"><i class="fa-solid fa-user-shield"></i> Admin panel</a>
+      {% endif %}
+      <a href="{% url 'logout' %}" class="sidebar-link sidebar-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="dashboard-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" type="button" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+        <div>
+          <h1 class="dashboard-title">{% block page_title %}{% endblock %}</h1>
+          <p class="dashboard-subtitle">{% block page_subtitle %}{% endblock %}</p>
+        </div>
+      </div>
+      <div class="topbar-right">{% block topbar_actions %}{% endblock %}</div>
+    </div>
+    {% block dash_content %}{% endblock %}
+  </main>
+</div>
+{% endwith %}
+{% endblock %}

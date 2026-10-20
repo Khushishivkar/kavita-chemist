@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<section class="auth-section"><div class="auth-container">
+  <div class="auth-visual">
+    <div class="auth-brand">
+      <div class="auth-logo"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+      <h2>Welcome back</h2>
+      <p>Log in to check your stock, alerts and expiring medicines.</p>
+    </div>
+    <div class="auth-features">
+      <div class="auth-feature-item"><i class="fa-solid fa-circle-check"></i> Live stock levels</div>
+      <div class="auth-feature-item"><i class="fa-solid fa-circle-check"></i> Low stock and expiry alerts</div>
+      <div class="auth-feature-item"><i class="fa-solid fa-circle-check"></i> Works on phone and desktop</div>
+    </div>
+  </div>
+  <div class="auth-form-box">
+    <div class="auth-form-header"><h2>Login</h2><p>Enter your details to continue.</p></div>
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% for e in form.non_field_errors %}<div class="alert alert-error"><span>{{ e }}</span></div>{% endfor %}
+      {% include 'main/_field.html' with field=form.username icon='fa-user' %}
+      {% include 'main/_field.html' with field=form.password icon='fa-lock' %}
+      <button type="submit" class="btn btn-primary btn-lg btn-full">Login</button>
+    </form>
+    <div class="auth-footer"><span>New here? <a href="{% url 'register' %}">Create an account</a></span><a href="{% url 'home' %}">&larr; Back to website</a></div>
+  </div>
+</div></section>
+{% endblock %}

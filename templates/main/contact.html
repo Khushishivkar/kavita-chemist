@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><div class="page-hero-content">
+  <h1>Get in touch</h1>
+  <p>Questions, feedback or need help? We would love to hear from you.</p>
+</div></div></section>
+
+<section class="contact-section"><div class="container"><div class="contact-grid">
+  <div class="contact-info">
+    <h2>Visit or call us</h2>
+    <p>Drop by the shop or send a message and we will reply as soon as we can.</p>
+    <div class="contact-details">
+      <div class="contact-detail-item"><div class="contact-detail-icon"><i class="fa-solid fa-location-dot"></i></div><div><h4>Address</h4><p>{{ SHOP.address }}</p></div></div>
+      <div class="contact-detail-item"><div class="contact-detail-icon"><i class="fa-solid fa-phone"></i></div><div><h4>Phone</h4><p>{{ SHOP.phone }}</p></div></div>
+      <div class="contact-detail-item"><div class="contact-detail-icon"><i class="fa-solid fa-envelope"></i></div><div><h4>Email</h4><p>{{ SHOP.email }}</p></div></div>
+      <div class="contact-detail-item"><div class="contact-detail-icon"><i class="fa-solid fa-clock"></i></div><div><h4>Opening hours</h4><p>{{ SHOP.hours }}</p></div></div>
+    </div>
+  </div>
+  <div class="contact-form-box">
+    <h2>Send a message</h2>
+    <form method="post" class="contact-form" novalidate>
+      {% csrf_token %}
+      <div class="form-row-2">
+        {% include 'main/_field.html' with field=form.name %}
+        {% include 'main/_field.html' with field=form.email %}
+      </div>
+      {% include 'main/_field.html' with field=form.subject %}
+      {% include 'main/_field.html' with field=form.message %}
+      <button type="submit" class="btn btn-primary btn-lg btn-full"><i class="fa-solid fa-paper-plane"></i> Send message</button>
+    </form>
+  </div>
+</div></div></section>
+{% endblock %}

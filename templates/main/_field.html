@@ -1,0 +1,9 @@
+<div class="form-group">
+  <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span style="color:var(--red)">*</span>{% endif %}</label>
+  {% if icon %}
+    <div class="input-with-icon"><i class="fa-solid {{ icon }}"></i>{{ field }}</div>
+  {% else %}
+    {{ field }}
+  {% endif %}
+  {% for e in field.errors %}<span class="form-error">{{ e }}</span>{% endfor %}
+</div>

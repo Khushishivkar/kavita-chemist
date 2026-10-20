@@ -1,0 +1,65 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Medicines{% endblock %}
+{% block page_title %}Medicines{% endblock %}
+{% block page_subtitle %}{{ page.paginator.count }} item{{ page.paginator.count|pluralize }} found{% endblock %}
+{% block topbar_actions %}<a href="{% url 'product_create' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add medicine</a>{% endblock %}
+
+{% block dash_content %}
+<div class="search-filter-bar">
+  <form method="get" class="search-form">
+    <div class="search-input-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" name="q" value="{{ q }}" class="search-input" placeholder="Search by name or brand..."></div>
+    <select name="category" class="filter-select">
+      <option value="">All categories</option>
+      {% for c in categories %}<option value="{{ c.pk }}" {% if sel_category == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <select name="status" class="filter-select">
+      <option value="">Any status</option>
+      <option value="low" {% if sel_status == 'low' %}selected{% endif %}>Low stock</option>
+      <option value="out" {% if sel_status == 'out' %}selected{% endif %}>Out of stock</option>
+      <option value="expiring" {% if sel_status == 'expiring' %}selected{% endif %}>Expiring soon</option>
+      <option value="expired" {% if sel_status == 'expired' %}selected{% endif %}>Expired</option>
+    </select>
+    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter"></i> Filter</button>
+    {% if q or sel_category or sel_status %}<a href="{% url 'product_list' %}" class="btn btn-ghost">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="data-card">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead><tr><th>Medicine</th><th>Category</th><th>Price</th><th>Qty</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for p in page %}
+        <tr>
+          <td class="td-product"><strong><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></strong><small>{{ p.brand }}</small></td>
+          <td>{{ p.category|default:"-" }}</td>
+          <td>&#8377;{{ p.price }}</td>
+          <td>{{ p.quantity }}</td>
+          <td>{% if p.expiry_date %}{{ p.expiry_date|date:"d M Y" }}{% else %}-{% endif %}</td>
+          <td><span class="badge badge-{{ p.status_colour }}">{{ p.status_label }}</span></td>
+          <td>
+            <div class="action-btns">
+              <a class="action-btn view" href="{{ p.get_absolute_url }}" title="View"><i class="fa-solid fa-eye"></i></a>
+              <a class="action-btn stock" href="{% url 'product_stock' p.pk %}" title="Update stock"><i class="fa-solid fa-boxes-stacked"></i></a>
+              <a class="action-btn edit" href="{% url 'product_edit' p.pk %}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+              <a class="action-btn delete" href="{% url 'product_delete' p.pk %}" title="Delete"><i class="fa-solid fa-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="empty-td">No medicines match. <a href="{% url 'product_create' %}">Add one</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if page.has_other_pages %}
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:12px;flex-wrap:wrap">
+    <span class="dashboard-subtitle">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    <div style="display:flex;gap:8px">
+      {% if page.has_previous %}<a class="btn btn-ghost btn-sm" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.previous_page_number }}">&larr; Previous</a>{% endif %}
+      {% if page.has_next %}<a class="btn btn-ghost btn-sm" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.next_page_number }}">Next &rarr;</a>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
